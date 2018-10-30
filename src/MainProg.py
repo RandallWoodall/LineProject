@@ -48,4 +48,17 @@ A = numpy.cosh(gamma * lineLen)
 D = A
 B = Zc * numpy.sinh(gamma*lineLen)
 C = numpy.sinh(gamma*lineLen)/Zc
+ABCDline = numpy.matrix([[A,B],[C,D]])
 
+# Use compensation to produce capacitor and inductor matrices
+compCap = seriesComp / 2 * numpy.imag(z * lineLen)
+ABCDcap = numpy.matrix([[1, -1j*compCap], [0, 1]])
+compInd = shuntComp / 2 * numpy.imag(y * lineLen)
+ABCDind = numpy.matrix([[1, 0], [1j * compInd, 1]])
+
+# Apply compensation
+step1 = numpy.matmul(ABCDind, ABCDcap)
+step2 = numpy.matmul(step1, ABCDline)
+step3 = numpy.matmul(step2, ABCDcap)
+ABCDfull = numpy.matmul(step3, ABCDind)
+print(ABCDfull)
