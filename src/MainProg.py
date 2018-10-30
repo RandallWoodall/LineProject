@@ -12,6 +12,7 @@ for conductorKey in conductorsRaw.keys():
 
 # Get inputs
 nomVolt = float(input("Input nominal voltage (kV): "))
+nomVolt = nomVolt * 10**3
 lineLen = float(input("Input line length (km): "))
 bundleNum = int(input("Input conductors per bundle: "))
 bundleDist = float(input("Input distance between conductors in a bundle (feet): "))
@@ -22,7 +23,7 @@ lineName = input("Input the conductor name: ")
 conductorChoice = conductors[lineName]
 seriesComp = float(input("Input % series compensation: ")) / 100
 shuntComp = float(input("Input % shunt compensation: ")) / 100
-load = float(input("Input load power (MVA): "))
+load = float(input("Input load power (MW): "))
 powerFactor = float(input("Input power factor: "))
 leadLag = input("Input lead/lag: ")
 
