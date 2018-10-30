@@ -38,3 +38,14 @@ reactance_per_km = numpy.log(Deq/DS) * 754e-4
 # Calculate suseptance/km
 suseptance_per_km = 240000 * constants.pi**2 * constants.epsilon_0 / numpy.log(Deq/DSC)
 
+# Get ABCD
+z = resistance_per_km / 1000 + 1j*reactance_per_km / 1000
+y = 1j*suseptance_per_km / 1000
+gamma = numpy.sqrt(z * y)
+Zc = numpy.sqrt(z/y)
+Beta = numpy.imag(gamma)
+A = numpy.cosh(gamma * lineLen)
+D = A
+B = Zc * numpy.sinh(gamma*lineLen)
+C = numpy.sinh(gamma*lineLen)/Zc
+
