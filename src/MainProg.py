@@ -34,10 +34,7 @@ Deq = st.gmean([phaseDist, phaseDist, phaseDist*2])
 DS = st.gmean([conductorChoice.gmr] + [bundleDist] * (bundleNum - 1))
 DSC = st.gmean([conductorChoice.out_diam / 24] + [bundleDist] * (bundleNum - 1))
 # Calculate reactance/km
-reactance_per_km = constants.pi * 240000 * 10**(-7) * numpy.log(Deq/DS)
+reactance_per_km = numpy.log(Deq/DS) * 754e-4
 # Calculate suseptance/km
-suseptance_per_km = 2000 * constants.pi * constants.epsilon_0 / numpy.log(Deq/DSC)
+suseptance_per_km = 240000 * constants.pi**2 * constants.epsilon_0 / numpy.log(Deq/DSC)
 
-print("Resistance/km: " + str(resistance_per_km))
-print("Reactance/km: " + str(reactance_per_km))
-print("Suseptance/km: " + str(suseptance_per_km))
