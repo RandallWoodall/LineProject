@@ -106,7 +106,7 @@ Pmax = (vMag**2 * numpy.cos(numpy.angle(Bnl) - 35 * constants.pi/180)/numpy.abs(
         - vMag**2 * numpy.real(Anl/Bnl)) * 3
 
 # Output all the desired values
-print("Receiving end voltage (kV): " + str(nomVolt))
+print("Receiving end voltage (kV): " + str(nomVolt*10**-3))
 print("Line Length (km): " + str(lineLen))
 print("Conductors per bundle: " + str(bundleNum))
 print("Distance between lines in bundle: " + str(bundleDist))
