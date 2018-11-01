@@ -8,7 +8,7 @@ from Conductor import conductor
 conductors = {}
 conductorsRaw = json.loads(open("conductors.json", "r").read())
 for conductorKey in conductorsRaw.keys():
-    conductors[conductorKey] = conductor(conductorsRaw[conductorKey])
+    conductors[conductorKey] = conductor(conductorsRaw[conductorKey], conductorKey)
 
 # Get inputs
 nomVolt = float(input("Input nominal voltage (kV): "))
@@ -17,10 +17,19 @@ lineLen = float(input("Input line length (km): "))
 bundleNum = int(input("Input conductors per bundle: "))
 bundleDist = float(input("Input distance between conductors in a bundle (feet): "))
 phaseDist = float(input("Input distance between phases (feet): "))
-lineName = input("Input the conductor name: ")
+lineName = input("Input the conductor name or circular mills: ")
 # conductorChoice gives us gmr(feet), diam & radius (inches), ac resistance per mile,
 # current carrying capacity
-conductorChoice = conductors[lineName]
+try:
+    conductorChoice = conductors[lineName]
+except KeyError:
+    for key in conductors.keys():
+        if conductors[key].circ_mils == int(lineName):
+            conductorChoice = conductors[key]
+            lineName = conductorChoice.name
+            break;
+if conductorChoice == None:
+    print("Error choosing conductor.")
 seriesComp = float(input("Input % series compensation: ")) / 100
 shuntComp = float(input("Input % shunt compensation: ")) / 100
 load = float(input("Input load power (MW): "))
