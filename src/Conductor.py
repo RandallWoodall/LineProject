@@ -6,3 +6,4 @@ class conductor:
         self.gmr = conductorJson['gmr']
         self.r_60 = conductorJson['r_60']
         self.amp_cap = conductorJson['amp_cap']
+        self.weight_per_mile = conductorJson['weight_per_mile']
