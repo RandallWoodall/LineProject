@@ -36,6 +36,16 @@ load = float(input("Input load power (MW): "))
 powerFactor = float(input("Input power factor: "))
 leadLag = input("Input lead/lag: ")
 
+# Hard-coding cost values
+conductor_p = .8 # per pound
+capacitor_p = 11000 # per MVAR
+reactor_p = 20000 # per MVAR
+terminal_p345 = 1000000 
+terminal_p500 = 4000000
+interest_rate = .04 # 4%
+energy_p = 10 # per MWH
+recovery = 10 # years
+
 # Calculate resistance/km
 resistance_per_km = conductorChoice.r_60 * 1.609 / bundleNum
 # Calculate Deq and DS, and DSC
