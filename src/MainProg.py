@@ -76,7 +76,7 @@ ABCDline = numpy.matrix([[A,B],[C,D]])
 # Use compensation to produce capacitor and inductor matrices
 compCap = seriesComp / 2 * numpy.imag(z * lineLen)
 ABCDcap = numpy.matrix([[1, -1j*compCap], [0, 1]])
-compInd = shuntComp / 2 / numpy.imag(y * lineLen)
+compInd = shuntComp / 2 * numpy.imag(y * lineLen)
 ABCDind = numpy.matrix([[1, 0], [1j * compInd, 1]])
 
 # Apply compensation
@@ -167,7 +167,7 @@ print("Sending end power (MVA) (nl): " + str(Ssnl * 10**-6))
 print("Receiving end voltage (kV) (nl): " + str(Vrnl * 10**-3))
 print("Receiving end current (A) (nl): 0 (disconnected)")
 print("Receiving end power (VA) (nl): 0 (disconnected)")
-print("Full load losses (MW) (nl): " + str(lossnl * 10**-6))
+print("No load losses (MW) (nl): " + str(lossnl * 10**-6))
 
 # Added on portion begins here.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,7 +177,6 @@ capacitor_p = 11000 # per MVAR
 reactor_p = 20000 # per MVAR
 terminal_p345 = 1000000 # Assuming this means one or the other...
 terminal_p500 = 4000000
-print(terminal_p)
 interest_rate = .04 # 4%
 energy_p = 10 # per MWH
 recovery = 10 # years
@@ -185,12 +184,27 @@ tower_p = 20000 # per tower
 tower_distance = 270 # meters between
 # Begin with calculating MVA of the series capacitors; we know how much power 
 # they will be absorbing, therefore we know the desired rating.
-shuntRating = 6 * Vrfl**2 / compInd # Combined VAR for 6 reactors
-seriesRating = 6 * Iline**2 * compCap # Combined VAR for 6 capacitors
+shuntRating = 6 * Vrfl**2 * compInd * 10**-6 # Combined VAR for 6 reactors
+seriesRating = 6 * numpy.abs(Iline)**2 * compCap * 10**-6 # Combined VAR for 6 capacitors
 # Conductor Weight per mile has been added to the table.
 conductor_cost = float(conductorChoice.weight_per_mile) * bundleNum \
     * conductor_p * lineLen * 0.621371
 tower_cost = lineLen / tower_distance * tower_p
 compensation_cost = shuntRating * reactor_p + seriesRating * capacitor_p
 terminal_cost = terminal_p345 if nomVolt == 345e3 else terminal_p500
+# cost of loss calculations
+load_factor = .7
+yearly_energy_loss = lossfl * 10**-6 * load_factor * 8760
+yearly_loss_cost = yearly_energy_loss * energy_p
+# Modifying equation to match the following source:
+# https://www.ajdesigner.com/phppresentworth/present_worth_annual_payment_equation_future.php
+present_worth_of_loss = yearly_loss_cost * ((1+interest_rate)**recovery - 1)\
+    /interest_rate
 
+print('\n')
+print('Capacitor and shunt reactor costs: ' + str(compensation_cost))
+print('Conductor cost: ' + str(conductor_cost))
+print('Tower cost: ' + str(tower_cost))
+print('Present worth of losses: ' + str(present_worth_of_loss))
+print("Total cost: " + \
+    str(compensation_cost + conductor_cost + tower_cost + present_worth_of_loss))
